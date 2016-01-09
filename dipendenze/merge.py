@@ -2,7 +2,10 @@ import os
 
 from pdfrw import PdfReader, PdfWriter
 
-def merge(*varargs):
+def merge(*varargs,merge_file):
+
+    if(merge_file.endswith('.pdf')):
+        merge_file = merge_file+".pdf"
 
     for x in varargs:
         if(isinstance(x,str) == False):

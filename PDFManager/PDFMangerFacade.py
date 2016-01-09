@@ -32,7 +32,7 @@ class PDFMangerFacade:
 
     def rotatePage(filename, filenameOut = "out.pdf", degree = 180):
         if(PDFMangerFacade.__is_safe__(filename)):
-             raise Exception("Errore: Non utilizzare path assolute o relative")
+             raise Exception("Errore: Non utilizzare path assolute o relative");
         dipendenze.rotatePage(filename, filenameOut, degree)
 
     def __is_safe__(filename):

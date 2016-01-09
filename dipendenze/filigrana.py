@@ -4,7 +4,9 @@ Created on 28/dic/2015
 @author: pippo
 '''
 from pdfrw import PdfReader, PdfWriter,PageMerge
+
 def watermark(file_name,file_watermark,a = 'newfile.pdf'):
+
     if(file_name.endswith(".pdf") and file_watermark.endswith(".pdf")):
         if(isinstance(a,str)):
             ipdf = PdfReader(file_name)
