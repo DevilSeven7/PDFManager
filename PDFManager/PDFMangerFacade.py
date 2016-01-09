@@ -35,6 +35,13 @@ class PDFMangerFacade:
              raise Exception("Errore: Non utilizzare path assolute o relative");
         dipendenze.rotatePage(filename, filenameOut, degree)
 
+
+    def splitting(filenameOut ="out",*varargs):
+        for x in varargs:
+            if(PDFMangerFacade.__is_safe__(x) == False):
+                raise Exception("Errore: Non utilizzare path assolute o relative");
+        dipendenze.splitting(filenameOut,varargs)
+
     def __is_safe__(filename):
         return not (filename.startswith(("/", "\\")) or             #path assoluta
                     (len(filename) > 1 and filename[1] == ":" and   #D:
