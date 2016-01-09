@@ -1,49 +1,143 @@
-import dipendenze
-import re
-import string
+from pdfrw import PdfReader, PdfWriter,PageMerge
+import PyPDF2
+import os
 
 class PDFMangerFacade:
 
     def __init__(self):
         None
 
+    def encrypt(file_name,password,a = "cripted.pdf"):
+
+        if(a.endswith('.pdf') == False):
+            a = a+".pdf"
+
+        if(file_name.endswith(".pdf") ):
+            if(isinstance(a,str)):
+                pdf_in = open(file_name, 'rb')
+                pdf_reader = PyPDF2.PdfFileReader(pdf_in)
+                pdf_writer = PyPDF2.PdfFileWriter()
+
+                for pagenum in range(pdf_reader.numPages):
+                    page = pdf_reader.getPage(pagenum)
+                    pdf_writer.addPage(page)
+
+
+                pdf_writer.encrypt(password)
+                pdf_out = open(a, 'wb')
+                pdf_writer.write(pdf_out)
+                pdf_out.close()
+                pdf_in.close()
+            else:
+                raise Exception('Errore: il terzo parametro deve essere una stringa.')
+        else:
+            raise Exception('Errore: Il nome del file deve terminare con .pdf')
+
+    def watermark(file_name,file_watermark,a = "newfile.pdf"):
+
+        if(file_name.endswith(".pdf") and file_watermark.endswith(".pdf")):
+            if(isinstance(a,str)):
+                ipdf = PdfReader(file_name)
+                wpdf = PdfReader(file_watermark)
+
+                wmark = PageMerge().add(wpdf.pages[0])[0]
+
+                for page in ipdf.pages:
+                    PageMerge(page).add(wmark).render()
+
+                PdfWriter().write(a, ipdf)
+            else:
+                raise Exception('Errore: Il terzo parametro deve essere una stringa.')
+        else:
+            raise Exception("Errore: Il primo e il secondo parametro devono terminare con .pdf")
+
     def merge(*varargs,a = 'merge_file'):
+
+        if(a.endswith('.pdf') == False):
+            a = a+".pdf"
+
         for x in varargs:
-            if (PDFMangerFacade.__is_safe__(x) == False):
-                raise Exception("Errore: Non utilizzare path assolute o relative")
+            if(isinstance(x,str) == False):
+                raise Exception("Errore: Tutti i parametri devono essere stringhe.")
 
-        dipendenze.merge(varargs,a)
+        writer = PdfWriter()
+        files = []
+        for x in varargs :
+            if x.endswith('.pdf'):
+                files.append(x)
+            else:
+                raise Exception("Errore tutti i parametri devono terminare con .pdf")
+        for fname in sorted(files):
+            reader = PdfReader(fname)
+            writer.addpages(reader.pages)
 
-    def watermark(file_name,file_watermark,a = 'newfile.pdf'):
-        if( (PDFMangerFacade.__is_safe__(file_name) == False) and (PDFMangerFacade.__is_safe__(file_watermark) == False) and (PDFMangerFacade.__is_safe__(a) == False)):
-            raise Exception("Errore: Non utilizzare path assolute o relative")
-        dipendenze.watermark(file_name,file_watermark,a)
+        writer.write(a)
 
-    def encrypt(file_name,password,a = 'rotated.pdf'):
-        if( (PDFMangerFacade.__is_safe__(file_name) == False) and (PDFMangerFacade.__is_safe__(a) == False)):
-            raise Exception("Errore: Non utilizzare path assolute o relative")
+    def splitting(*varargs,filenameOut ="out"):
 
-        dipendenze.encrypt(file_name,a)
+        for file in varargs:
+            if False == (isinstance(file,str)):
+                raise ValueError("Errore: i file devono essere pdf")
+
+        if False == (isinstance(filenameOut,str)):
+                raise ValueError("Errore: il nome del file deve essere di tipo str")
+
+
+        all = PdfWriter()
+        numpage=float("inf")
+
+        for file in varargs:
+            reader = PdfReader(file)
+            i=0
+            for page in reader.pages:
+                i=i+1
+            if (numpage > i):
+                 numpage=i
+
+        for i in range(numpage):
+            for filename in varargs:
+                reader = PdfReader(filename)
+                all.addPage(reader.getPage(i))
+        if(filenameOut.endswith('.pdf') == False):
+            filenameOut = filenameOut+'.pdf'
+
+        all.write(filenameOut)
+
+    def rotatePage(filename, filenameOut = "out", degree = 180):
+
+        if(filenameOut.endswith('.pdf') == False):
+            filenameOut = filenameOut+'.pdf'
+
+        if (filename.endswith(".pdf")):
+            if isinstance(filenameOut,  str):
+                if isinstance(degree, int):
+                    pdf_in = open(filename, 'rb')
+                    pdf_reader = PyPDF2.PdfFileReader(pdf_in)
+                    pdf_writer = PyPDF2.PdfFileWriter()
+
+                    for pagenum in range(pdf_reader.numPages):
+                        page = pdf_reader.getPage(pagenum)
+                        page.rotateClockwise(degree)
+                        pdf_writer.addPage(page)
+
+
+                    pdf_out = open(filenameOut, 'wb')
+                    pdf_writer.write(pdf_out)
+                    pdf_out.close()
+                    pdf_in.close()
+                else:
+                    raise ValueError("Errore: il grado deve essere di tipo int")
+            else:
+                raise Exception("Errore: il nome del file di output deve essere di tipo str ")
+        else:
+            raise Exception("Errore: il file deve essere un pdf")
 
     def stitching(filename):
-        if(PDFMangerFacade.__is_safe__(filename) == False):
-            raise Exception("Errore: Non utilizzare path assolute o relative")
-        dipendenze.stitching(filename)
+         if filename.endswith(".pdf"):
+            infile = PdfReader(filename)
+            for i, p in enumerate(infile.pages):
+                PdfWriter().addpage(p).write('page-%02d.pdf' % i)
 
-    def rotatePage(filename, filenameOut = "out.pdf", degree = 180):
-        if(PDFMangerFacade.__is_safe__(filename)):
-             raise Exception("Errore: Non utilizzare path assolute o relative");
-        dipendenze.rotatePage(filename, filenameOut, degree)
-
-
-    def splitting(filenameOut ="out",*varargs):
-        for x in varargs:
-            if(PDFMangerFacade.__is_safe__(x) == False):
-                raise Exception("Errore: Non utilizzare path assolute o relative");
-        dipendenze.splitting(filenameOut,varargs)
-
-    def __is_safe__(filename):
-        return not (filename.startswith(("/", "\\")) or             #path assoluta
-                    (len(filename) > 1 and filename[1] == ":" and   #D:
-                     filename[0] in string.ascii_letter) or
-                    re.search(r"[.] [.] [/\\]", filename))          #path relativa
+         else:
+            raise Exception("Errore: il file deve essere un pdf")
+PDFMangerFacade.stitching('junit.pdf')
