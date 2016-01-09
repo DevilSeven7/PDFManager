@@ -1,16 +1,23 @@
 import PyPDF2
 
-pdf_in = open('agenda.pdf', 'rb')
-pdf_reader = PyPDF2.PdfFileReader(pdf_in)
-pdf_writer = PyPDF2.PdfFileWriter()
+def encrypt(file_name,password,a = 'rotated.pdf'):
+    if(file_name.endswith(".pdf") ):
+        if(isinstance(a,str)):
+            pdf_in = open(file_name, 'rb')
+            pdf_reader = PyPDF2.PdfFileReader(pdf_in)
+            pdf_writer = PyPDF2.PdfFileWriter()
 
-for pagenum in range(pdf_reader.numPages):
-    page = pdf_reader.getPage(pagenum)
-    pdf_writer.addPage(page)
+            for pagenum in range(pdf_reader.numPages):
+                page = pdf_reader.getPage(pagenum)
+                pdf_writer.addPage(page)
 
 
-pdf_writer.encrypt('Ciao')
-pdf_out = open('rotated.pdf', 'wb')
-pdf_writer.write(pdf_out)
-pdf_out.close()
-pdf_in.close()
+            pdf_writer.encrypt(password)
+            pdf_out = open(a, 'wb')
+            pdf_writer.write(pdf_out)
+            pdf_out.close()
+            pdf_in.close()
+        else:
+            raise Exception('Errore: il terzo parametro deve essere una stringa.')
+    else:
+        raise Exception('Errore: Il nome del file deve terminare con .pdf')
