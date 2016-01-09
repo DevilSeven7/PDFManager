@@ -7,12 +7,12 @@ class PDFMangerFacade:
     def __init__(self):
         None
 
-    def merge(*varargs):
+    def merge(*varargs,a = 'merge_file'):
         for x in varargs:
             if (PDFMangerFacade.__is_safe__(x) == False):
                 raise Exception("Errore: Non utilizzare path assolute o relative")
 
-        dipendenze.merge(varargs)
+        dipendenze.merge(varargs,a)
 
     def watermark(file_name,file_watermark,a = 'newfile.pdf'):
         if( (PDFMangerFacade.__is_safe__(file_name) == False) and (PDFMangerFacade.__is_safe__(file_watermark) == False) and (PDFMangerFacade.__is_safe__(a) == False)):
@@ -24,6 +24,16 @@ class PDFMangerFacade:
             raise Exception("Errore: Non utilizzare path assolute o relative")
 
         dipendenze.encrypt(file_name,a)
+
+    def stitching(filename):
+        if(PDFMangerFacade.__is_safe__(filename) == False):
+            raise Exception("Errore: Non utilizzare path assolute o relative")
+        dipendenze.stitching(filename)
+
+    def rotatePage(filename, filenameOut = "out.pdf", degree = 180):
+        if(PDFMangerFacade.__is_safe__(filename)):
+             raise Exception("Errore: Non utilizzare path assolute o relative")
+        dipendenze.rotatePage(filename, filenameOut, degree)
 
     def __is_safe__(filename):
         return not (filename.startswith(("/", "\\")) or             #path assoluta
