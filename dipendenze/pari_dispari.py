@@ -1,22 +1,34 @@
-'''
-Created on 28/dic/2015
 
-@author: pippo
-'''
-from pdfrw import PdfReader, PdfWriter, PageMerge 
+from pdfrw import PdfReader, PdfWriter
 
-even = PdfReader('pdf_file/esami.pdf') 
-odd = PdfReader('pdf_file/newfile.pdf') 
-all = PdfWriter() 
-blank = PageMerge() 
-blank.mbox = [0, 0, 612, 792] # 8.5 x 11 
-blank = blank.render() 
-all.addpage(blank)
+def splitting(filenameOut ="out",*varargs):
 
-for x,y in zip(odd.pages, even.pages):
-    all.addpage(x) 
-    all.addpage(y) 
-while len(all.pagearray) % 2:
-    all.addpage(blank)
+    for file in varargs:
+        if False == (isinstance(file,str)):
+            raise ValueError("Errore: i file devono essere pdf")
 
-all.write('all.pdf')
+    if False == (isinstance(filenameOut,str)):
+            raise ValueError("Errore: il nome del file deve essere di tipo str")
+
+
+    all = PdfWriter()
+    numpage=float("inf")
+
+    for file in varargs:
+        reader = PdfReader(file)
+        i=0
+        for page in reader.pages:
+            i=i+1
+        if (numpage > i):
+             numpage=i
+
+    for i in range(numpage):
+        for filename in varargs:
+            reader = PdfReader(filename)
+            all.addPage(reader.getPage(i))
+
+
+    all.write(filenameOut+".pdf")
+
+
+
