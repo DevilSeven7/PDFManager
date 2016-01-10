@@ -1,12 +1,13 @@
 from pdfrw import PdfReader, PdfWriter,PageMerge
 import PyPDF2
-import os
+
 
 class PDFMangerFacade:
 
     def __init__(self):
         None
 
+    @staticmethod
     def encrypt(file_name,password,a = "cripted.pdf"):
 
         if(a.endswith('.pdf') == False):
@@ -32,7 +33,7 @@ class PDFMangerFacade:
                 raise Exception('Errore: il terzo parametro deve essere una stringa.')
         else:
             raise Exception('Errore: Il nome del file deve terminare con .pdf')
-
+    @staticmethod
     def watermark(file_name,file_watermark,a = "newfile.pdf"):
 
         if(file_name.endswith(".pdf") and file_watermark.endswith(".pdf")):
@@ -50,7 +51,7 @@ class PDFMangerFacade:
                 raise Exception('Errore: Il terzo parametro deve essere una stringa.')
         else:
             raise Exception("Errore: Il primo e il secondo parametro devono terminare con .pdf")
-
+    @staticmethod
     def merge(*varargs,a = 'merge_file'):
 
         if(a.endswith('.pdf') == False):
@@ -72,7 +73,7 @@ class PDFMangerFacade:
             writer.addpages(reader.pages)
 
         writer.write(a)
-
+    @staticmethod
     def splitting(*varargs,filenameOut ="out"):
 
         for file in varargs:
@@ -103,6 +104,7 @@ class PDFMangerFacade:
 
         all.write(filenameOut)
 
+    @staticmethod
     def rotatePage(filename, filenameOut = "out", degree = 180):
 
         if(filenameOut.endswith('.pdf') == False):
@@ -132,6 +134,7 @@ class PDFMangerFacade:
         else:
             raise Exception("Errore: il file deve essere un pdf")
 
+    @staticmethod
     def stitching(filename):
          if filename.endswith(".pdf"):
             infile = PdfReader(filename)
@@ -140,4 +143,5 @@ class PDFMangerFacade:
 
          else:
             raise Exception("Errore: il file deve essere un pdf")
-PDFMangerFacade.stitching('junit.pdf')
+
+
