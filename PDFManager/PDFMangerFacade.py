@@ -140,4 +140,12 @@ class PDFMangerFacade:
 
          else:
             raise Exception("Errore: il file deve essere un pdf")
-PDFMangerFacade.stitching('junit.pdf')
+
+    def pagescount(filename):
+        if(filename.endswith('.pdf') == False):
+            raise Exception("Errore il nome del file deve terminare con .pdf")
+        reader = PdfReader(filename)
+        i = 0
+        for x in reader.pages:
+            i = i+1
+        return i
