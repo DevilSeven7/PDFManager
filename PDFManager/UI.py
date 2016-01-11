@@ -70,7 +70,7 @@ class PDFManager_UI:
         try:
             pos = self.list_file.selection()[0]
             posizione = self.list_file.index(pos)
-            del(self.files[posizione]);
+            del(self.files[posizione])
             self.list_file.delete(pos)
             for x in self.files:
                 print(x)
