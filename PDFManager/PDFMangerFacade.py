@@ -35,6 +35,9 @@ class PDFMangerFacade:
 
     def watermark(file_name,file_watermark,a = "newfile.pdf"):
 
+        if(a.endswith('.pdf') == False):
+            a = a+'.pdf'
+
         if(file_name.endswith(".pdf") and file_watermark.endswith(".pdf")):
             if(isinstance(a,str)):
                 ipdf = PdfReader(file_name)
@@ -52,13 +55,15 @@ class PDFMangerFacade:
             raise Exception("Errore: Il primo e il secondo parametro devono terminare con .pdf")
 
     def merge(*varargs,a = 'merge_file'):
+        if (len(varargs) <=1):
+            raise Exception('Errore: utilizzare almeno due file.')
 
         if(a.endswith('.pdf') == False):
             a = a+".pdf"
 
         for x in varargs:
             if(isinstance(x,str) == False):
-                raise Exception("Errore: Tutti i parametri devono essere stringhe.")
+                raise ValueError("Errore: Tutti i parametri devono essere stringhe.")
 
         writer = PdfWriter()
         files = []
@@ -66,8 +71,8 @@ class PDFMangerFacade:
             if x.endswith('.pdf'):
                 files.append(x)
             else:
-                raise Exception("Errore tutti i parametri devono terminare con .pdf")
-        for fname in sorted(files):
+                raise Exception("Errore: tutti i parametri devono terminare con .pdf")
+        for fname in files:
             reader = PdfReader(fname)
             writer.addpages(reader.pages)
 
@@ -75,13 +80,15 @@ class PDFMangerFacade:
 
     def splitting(*varargs,filenameOut ="out"):
 
+        if(len(varargs)<=1):
+            raise IndexError("Errore: inserire almeno due file.")
+
         for file in varargs:
             if False == (isinstance(file,str)):
                 raise ValueError("Errore: i file devono essere pdf")
 
         if False == (isinstance(filenameOut,str)):
                 raise ValueError("Errore: il nome del file deve essere di tipo str")
-
 
         all = PdfWriter()
         numpage=float("inf")
@@ -132,14 +139,13 @@ class PDFMangerFacade:
         else:
             raise Exception("Errore: il file deve essere un pdf")
 
-    def stitching(filename):
-         if filename.endswith(".pdf"):
+    def stitching(filename,fileout = 'out'):
+        if filename.endswith(".pdf"):
             infile = PdfReader(filename)
-            for i, p in enumerate(infile.pages):
-                PdfWriter().addpage(p).write('page-%02d.pdf' % i)
-
-         else:
+        else:
             raise Exception("Errore: il file deve essere un pdf")
+        for i, p in enumerate(infile.pages):
+            PdfWriter().addpage(p).write(fileout+'_page-%02d.pdf' % (i+1))
 
     def pagescount(filename):
         if(filename.endswith('.pdf') == False):
