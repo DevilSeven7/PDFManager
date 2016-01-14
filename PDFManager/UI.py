@@ -15,22 +15,22 @@ class PDFManager_UI:
 
         self.frame = Frame(self.root,height=2,bd=2,relief=SUNKEN,bg='black',)
 
-        self.button_merge = Button(self.root,text = 'Unisci',command=self.unisci)
+        self.button_merge = Button(self.root, text = 'Unisci', command=self.__unisci__)
         self.button_stitching = Button(self.root,text = 'Dividi',command=self.dividi)
-        self.button_split = Button(self.root,text = 'Fusione',command=self.fusione)
-        self.button_watermark = Button(self.root,text = 'Filigrana',command=self.filigrana)
-        self.button_encript = Button(self.root,text = 'Cripta',command=self.cripta)
-        self.button_rotate = Button(self.root,text='Ruota',command=self.ruota)
-        self.button_clear =Button(self.root,text='Rimuovi tutto',command=self.svuota)
+        self.button_split = Button(self.root, text = 'Fusione', command=self.__fusione__)
+        self.button_watermark = Button(self.root, text = 'Filigrana', command=self.__filigrana__)
+        self.button_encript = Button(self.root, text = 'Cripta', command=self.__cripta__)
+        self.button_rotate = Button(self.root, text='Ruota', command=self.__ruota__)
+        self.button_clear =Button(self.root, text='Rimuovi tutto', command=self.__svuota__)
 
         self.password = Entry(self.root)
         self.combo_rotate = ttk.Combobox(self.root,state='readonly')
         self.combo_rotate['values'] = (0,90,180,270)
         lblPass = Label(self.root,text='Password :',anchor=E)
-        lblGradi = Label(self.root,text='Gradi ;',anchor=E)
+        lblGradi = Label(self.root,text='Gradi :',anchor=E)
 
-        self.button_add = Button(self.root,text='Aggiungi PDF',command=self.aggiungi)
-        self.button_delete = Button(self.root,text='Rimuovi selezionato',command=self.rimuovi)
+        self.button_add = Button(self.root, text='Aggiungi PDF', command=self.__aggiungi__)
+        self.button_delete = Button(self.root, text='Rimuovi selezionato', command=self.__rimuovi__)
 
         self.list_file = ttk.Treeview(self.root)
         self.list_file['columns'] =('NumeroPagine')
@@ -67,7 +67,7 @@ class PDFManager_UI:
         self.button_split.config(state=DISABLED)
         self.button_rotate.config(state=DISABLED)
 
-    def aggiungi(self):
+    def __aggiungi__(self):
         filelist = filedialog.askopenfilenames(filetypes=[("PDF file",".pdf")])
         for file in filelist:
             if(file in self.files):
@@ -77,9 +77,9 @@ class PDFManager_UI:
             split = file.split("/").pop()
             self.list_file.insert("",self.i,text=split,values=(PDFMangerFacade.pagescount(file)))
 
-        self.controlla()
+        self.__controlla__()
 
-    def rimuovi(self):
+    def __rimuovi__(self):
         try:
             pos = self.list_file.selection()[0]
             posizione = self.list_file.index(pos)
@@ -90,17 +90,17 @@ class PDFManager_UI:
 
         except IndexError:
             messagebox.showwarning("Attenzione","Nessun elemento selezionato")
-        self.controlla()
+        self.__controlla__()
 
-    def unisci(self):
+    def __unisci__(self):
         try:
             name = filedialog.asksaveasfilename(filetypes=[("PDF file",".pdf")])
             if(name.endswith('.pdf') == False):
                 name = name+'.pdf'
-            PDFMangerFacade.merge(*self.files,a = name);
+            PDFMangerFacade.merge(*self.files, filenameOut=name);
         except Exception as e:
             messagebox.showwarning("Attenzione",e)
-    def svuota(self):
+    def __svuota__(self):
         self.files = []
         self.list_file.delete(*self.list_file.get_children())
     def dividi(self):
@@ -109,31 +109,31 @@ class PDFManager_UI:
             posizione = self.list_file.index(pos)
             phat = filedialog.askdirectory()
             prefisso = (self.files[posizione].split("/").pop()).split('.')[0]
-            PDFMangerFacade.stitching(self.files[posizione],phat+'/'+prefisso)
+            PDFMangerFacade.stitching(self.files[posizione], phat + '/' + prefisso)
         except IndexError:
             messagebox.showwarning("Attenzione","Elemento non selezionato")
 
-    def fusione(self):
+    def __fusione__(self):
 
         try:
             name = filedialog.asksaveasfilename(filetypes=[("PDF file",".pdf")])
-            PDFMangerFacade.splitting(*self.files,name)
+            PDFMangerFacade.splitting(*self.files,filenameout = name)
         except IndexError as e:
             messagebox.showwarning("Attenzione",e)
 
-    def filigrana(self):
+    def __filigrana__(self):
         try:
             pos = self.list_file.selection()[0]
             posizione = self.list_file.index(pos)
             print(self.files[posizione])
             name_filigrana = filedialog.askopenfilename(filetypes=[("PDF file",".pdf")])
             name = filedialog.asksaveasfilename(filetypes=[("PDF file",".pdf")])
-            PDFMangerFacade.watermark(self.files[posizione],name_filigrana,name)
+            PDFMangerFacade.watermark(self.files[posizione], name_filigrana, name)
         except IndexError:
             messagebox.showwarning("Attenzione","Elemento non selezionato.")
 
 
-    def cripta(self):
+    def __cripta__(self):
         try:
             pos = self.list_file.selection()[0]
             posizione = self.list_file.index(pos)
@@ -142,12 +142,12 @@ class PDFManager_UI:
                 messagebox.showwarning("Attenzione","Inserire una password.")
                 return
             name = filedialog.asksaveasfilename(filetypes=[("PDF file",".pdf")])
-            PDFMangerFacade.encrypt(self.files[posizione],password,name);
+            PDFMangerFacade.encrypt(self.files[posizione], password, name);
             self.password.delete(0,'end')
         except IndexError:
             messagebox.showwarning("Attenzione","Elemento non selezionato.")
 
-    def ruota(self):
+    def __ruota__(self):
         try:
             pos = self.list_file.selection()[0]
             posizione = self.list_file.index(pos)
@@ -162,23 +162,22 @@ class PDFManager_UI:
     def start(self):
         self.root.mainloop()
 
-    def controlla(self):
-        i = len(self.files)
-        if(i == 0):
+    def __controlla__(self):
+        if((self.i+1) == 0):
             self.button_stitching.config(state=DISABLED)
             self.button_encript.config(state=DISABLED)
             self.button_watermark.config(state=DISABLED)
             self.button_merge.config(state=DISABLED)
             self.button_split.config(state=DISABLED)
             self.button_rotate.config(state=DISABLED)
-        if(i ==1):
+        if((self.i+1) ==1):
             self.button_stitching.config(state=NORMAL)
             self.button_encript.config(state=NORMAL)
             self.button_watermark.config(state=NORMAL)
             self.button_merge.config(state=DISABLED)
             self.button_split.config(state=DISABLED)
             self.button_rotate.config(state=NORMAL)
-        if(i >1):
+        if((self.i+1) >1):
             self.button_stitching.config(state=NORMAL)
             self.button_encript.config(state=NORMAL)
             self.button_watermark.config(state=NORMAL)
