@@ -13,7 +13,19 @@ class PDFManager_UI:
         self.root = Tk()
         self.root.title('PDFManager')
 
+        self.root.wm_iconbitmap("ico.ico") #icona
         self.frame = Frame(self.root,height=2,bd=2,relief=SUNKEN,bg='black',)
+        self.root.resizable(False, False) #settaggio redimensione
+
+        #centrare nello schermo
+        larghezza = self.root.winfo_screenwidth()    # larghezza schermo in pixel
+        altezza = self.root.winfo_screenheight()     # altezza schermo in pixel
+        WIDTH =  self.root.winfo_reqwidth()
+        HEIGHT =  self.root.winfo_reqheight()
+
+        x = larghezza//2 - WIDTH
+        y = altezza//2 - HEIGHT
+        self.root.geometry("%dx%d+%d+%d" % (421,342 , x, y))
 
         self.button_merge = Button(self.root, text = 'Unisci', command=self.__unisci__)
         self.button_stitching = Button(self.root,text = 'Dividi',command=self.dividi)
@@ -59,6 +71,7 @@ class PDFManager_UI:
         self.button_rotate.grid(row=7,column=0,columnspan=2,sticky=(W,E))
         lblGradi.grid(row=7,column=2)
         self.combo_rotate.grid(row=7,column=3,columnspan=2,sticky=(W,E))
+
 
         self.button_stitching.config(state=DISABLED)
         self.button_encript.config(state=DISABLED)
