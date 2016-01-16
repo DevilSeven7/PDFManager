@@ -163,5 +163,5 @@ class PDFMangerFacade:
         reader = PdfReader(filename)
         i = 0
         for x in reader.pages:
-            i = i+1
+            i = i+1;
         return i
