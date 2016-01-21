@@ -110,7 +110,7 @@ class PDFManager_UI:
             name = filedialog.asksaveasfilename(filetypes=[("PDF file",".pdf")])
             if(name.endswith('.pdf') == False):
                 name = name+'.pdf'
-            PDFMangerFacade.merge(*self.files, filenameOut=name);
+            PDFMangerFacade.merge(*self.files, filenameOut=name)
         except Exception as e:
             messagebox.showwarning("Attenzione",e)
     def __svuota__(self):
