@@ -130,7 +130,7 @@ class PDFManager_UI:
 
         try:
             name = filedialog.asksaveasfilename(filetypes=[("PDF file",".pdf")])
-            PDFMangerFacade.splitting(*self.files,filenameout = name)
+            PDFMangerFacade.splitting(*self.files,filenameOut = name)
         except IndexError as e:
             messagebox.showwarning("Attenzione",e)
 
